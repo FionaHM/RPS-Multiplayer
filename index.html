@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>RPG Multiplayer Game</title>
+    <!-- JQuery Link -->
+   	<script src="https://code.jquery.com/jquery-2.2.3.js" integrity="sha256-laXWtGydpwqJ8JA+X9x2miwmaiKhn8tVmOVEigRNtP4=" crossorigin="anonymous"></script>
+	<!-- Firebase Link -->
+	<script src="https://www.gstatic.com/firebasejs/3.5.2/firebase.js"></script>
+    <!-- Bootstrap Link -->
+	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+	<!-- local css file -->
+	<link type="text/css" rel="stylesheet" href="assets/css/style.css"> 
+</head>
+<body>
+<div class="container">
+	<div class="jumbotron page-header text-center"><h2>Rock, Paper, Scissors Game</h2></div>
+	<div class="row">
+		<div class="well">
+			<div class="col-md-2"></div>
+			<div class="col-md-8">
+				<div class="col-md-3 text-center">
+				    <label class="show-initially" for="player-name">Enter Your Name: </label>
+				</div>
+				<div class="col-md-3 text-center">
+					<input class="show-initially" type="text" name="player" id="player-name">
+				</div>
+				<div class="col-md-6 text-center">
+					<button type="button" id="player-name-submit" class="btn btn-default show-initially">Start</button>
+				</div>
+				<div class="hide-initially">Hi<span class="show-user">Username</span>!</div>
+			</div>
+			<div class="col-md-2"></div>
+		</div> <!--  end of well -->
+	</div> <!-- end of first row -->
+	<!-- Start of Player Panel -->
+	<div class="row">
+		<div class="col-md-4">
+			<div class="panel panel-default">
+			  <div class="panel-body" id="player1">
+			    <h3 class="show-initially" id="waiting-player2">Waiting for Player1</h3>
+			    <h3 class="hide-initially" id="player1-name">Player1</h3>
+			    <h3 class="hide-initially" id="p1-rock">Rock</h3>
+			    <h3 class="hide-initially" id="p1-paper">Paper</h3>
+			    <h3 class="hide-initially" id="p1-scissors">Scissors</h3>
+			  </div>
+			</div>
+		</div>
+		<div class="col-md-4">
+			<div class="panel panel-default">
+			  	<div class="panel-body">
+			  	<h4>Wins and Losses</h4>
+			  	<div class="row">
+			  		<div class="hide-initially">Player 1</div>
+			  		<div class="hide-initially" id="player1-wins"></div>
+			  		<div class="hide-initially" id="player1-losses"></div>
+			  	</div>
+				<div class="row">
+					<div class="hide-initially">Player 2</div>
+					<div class="hide-initially" id="player2-wins"></div>
+					<div class="hide-initially" id="player2-losses"></div>
+				</div>
+
+			  </div>
+			</div>
+		</div>
+		<div class="col-md-4 text-center">
+			<div class="panel panel-default ">
+			  <div class="panel-body">
+			    <h3 class="show-initially" id="waiting-player2">Waiting for Player2</h3>
+				<h3 class="hide-initially" id="player2-name">Player2</h3>
+			    <h3 class="hide-initially" id="p2-rock">Rock</h3>
+			    <h3 class="hide-initially" id="p2-paper">Paper</h3>
+			    <h3 class="hide-initially" id="p2-scissors">Scissors</h3>
+			  </div>
+			</div>
+		</div>
+	</div>
+	<!-- Start of Chat Panel -->
+	<div class="row">
+		<div class="col-md-2"></div>
+		<div class="col-s-12 col-md-8">
+			<div class="row">
+				<div class="col-md-12 text-center">
+				 	<h3>Chat History</h3>
+					<div class="panel panel-default chat-panel">
+						<div class="panel-body">
+						  	<!-- Displays chat history -->
+							<div id="chat-history">
+							</div>	
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-12 text-center">
+					<input type="text" name="player" id="chat-input">
+					<button type="button" id="submit-chat" class="btn btn-default">Submit</button>
+				</div>
+			</div>
+		</div>
+		<div class="col-md-2"></div>
+	</div>
+	<div class="row"></div>
+
+	
+</div>   <!-- End of Container -->
+<!-- Local Javascript File -->
+<script type="text/javascript" src="assets/javascript/javascript.js"></script>
+</body>
+
+</html>
