@@ -74,12 +74,14 @@ $('document').ready(function(){
 				// $('.show-user').html(snapshot.child(i).val().userid);
 				newPlayerPosition = snapshot.val().playerPosition;
 				turn = snapshot.val().turn;
-				console.log("child" + i + "exists");
+
+				// set some local session storage - just for hiding the input box for current player only and not both
 				var localData = 'player' + i;
 				sessionStorage.setItem('player', localData);
-				// if (sessionStorage.getItem('player') === localData ){
-				// 	$('.show-initially').hide();
-				// }
+				if (sessionStorage.getItem('player') === localData ){
+						$('.show-initially').hide();
+				}
+			
 
 			}
 		}
@@ -101,6 +103,7 @@ $('document').ready(function(){
 		if ( playerData[newPlayerPosition].userid === "" ) {
 			playerData[newPlayerPosition].userid = $('#player-name').val().trim();
 			playerDbObj.child(newPlayerPosition).set(playerData[newPlayerPosition]);
+			// set some local session storage - just for hiding the input box for current player only and not both
 			var localData = 'player' + newPlayerPosition;
 			sessionStorage.setItem('player', localData);
 			if (sessionStorage.getItem('player') === localData ){
