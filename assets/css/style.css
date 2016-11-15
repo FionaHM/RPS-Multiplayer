@@ -31,18 +31,22 @@ h3, h4 {
 #chat-input {
 	width: 65%;
 }
+.score {
+	float: left;
+}
+
 .well {
 	min-height: 120px;
 	margin: 20px;
 }
-.hide-initially {
+.hide-initially-player1, .hide-initially-player2 {
 	display: none;
 }
-.show-initially {
+.show-initially-player1,  .show-initially-player2 {
 	display: block;
 }
 .panel {
-	height: 200px;
+	height: 300px;
 	width: 80%;
 	margin: 10%;
 	padding: 20px;
