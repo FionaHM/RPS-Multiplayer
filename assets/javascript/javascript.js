@@ -10,18 +10,19 @@ $('document').ready(function(){
 
 	 	firebase.initializeApp(config);
 
-
+	var k = 0;
 	var database =  firebase.database().ref("multiplayer-rps");
 	var playerDbObj = database.child("players");
+	// var player1DbObj = playerDbObj.child("1");
+	// var player2DbObj = playerDbObj.child("2");
 	var chatDbObj	= database.child("chat");
 	var currentPlayer = null;
-	// var turnDbObj = database.child("turn");
-	// var currentPlayerDbObj = database.child("currentPlayer");
-	var newPlayerPosition = 1;
+	
+	var newPlayerPosition = 0;
 	var turn = 1;
 
 	var playerData = 
-		{ 1: {userid: "",
+		{ 1 : { userid: "",
 		wins: 0,
 		losses: 0,
 		draws: 0,
@@ -29,101 +30,137 @@ $('document').ready(function(){
 		lastGuess: "", 
 		isActive: true,
 		timestamp: firebase.database.ServerValue.TIMESTAMP}, 
-		2 : {userid: "",
+		2: { userid: "",
 		wins: 0,
 		losses: 0,
 		draws: 0,
 		lastChat: "",
 		lastGuess: "", 
 		isActive: true,
-		timestamp: firebase.database.ServerValue.TIMESTAMP}}
+		timestamp: firebase.database.ServerValue.TIMESTAMP}};
 	
 	var objLength = Object.keys(playerData).length;
 
+	// set inintial values
+	// database.child('turn').set(turn);
+	database.child('playerPosition').set(newPlayerPosition);
 
 	database.on("value", function(snapshot) {
+		console.log("in here value" + k);
+		k=k+1;
+
 		/// on load check to see if the players exist and put them on the DOM if they do
 		for (var i=1; i <= objLength; i++){
-			console.log(i);
 			if (snapshot.child("players").child(i).exists()) {
-
-				$('.hide-initially-player' + i).removeClass('hide');
+				$('.hide-initially-player' + i).show();
 				$('#chat-history-div').removeClass('hide');
 				$('#chat-submit-div').removeClass('hide');
 				$('.show-initially-player' + i).hide();
-				$('.user-input-row').addClass('hide');
 				$('#player' + i + '-name').html(snapshot.child("players").child(i).val().userid);
 				$('#player' + i + '-wins').html(snapshot.child("players").child(i).val().wins);
 				$('#player' + i + '-losses').html(snapshot.child("players").child(i).val().losses);
 				$('#player' + i + '-draws').html(snapshot.child("players").child(i).val().draws);
-				newPlayerPosition = snapshot.val().playerPosition;
+				// newPlayerPosition = i;
+				console.log("changed to " + i);
 				turn = snapshot.val().turn;
+				console.log("to here" );
+				playerData[i].userid = snapshot.child("players").child(i).val().userid;
+				playerData[i].wins = snapshot.child("players").child(i).val().wins;
+				playerData[i].losses = snapshot.child("players").child(i).val().losses;
+				playerData[i].draws = snapshot.child("players").child(i).val().draws;
+				
 			}
+			else{
+				$('.hide-initially-player' + i).hide();
+				$('.show-initially-player' + i).show();
+				
 
-
-
+			}
+			newPlayerPosition = snapshot.child("playerPosition").val();
 		}
-
 	});
 
 
 	chatDbObj.on("child_added", function(childSnapshot) {
+		
 		console.log(childSnapshot.exists());
 				if (childSnapshot.exists()) {
 				var chatObjLength =  Object.keys(childSnapshot).length;
 				for (var i = 1; i <=  chatObjLength; i++){
-					// console.log("snapshot val" + childSnapshot.val());
-					// console.log("snapshot" + childSnapshot);
-					$('#chat-history').append(childSnapshot.val() + '<br>');
+					
+						$('#chat-history').append(childSnapshot.val() + '<br>');
 					}
 				
 				}
 	})
 
+	// database.on("child_added", function(snapshot){
+	// 	console.log("what happenenidn");
+	// 	for (var i=1; i <= objLength; i++){
+			
+	// 		if (snapshot.child("players").child(i).exists()) {
+				
+	// 			$('.hide-initially-player' + i).show();
+	// 			$('#chat-history-div').removeClass('hide');
+	// 			$('#chat-submit-div').removeClass('hide');
+	// 			$('.show-initially-player' + i).hide();
+	// 			$('#player' + i + '-name').html(snapshot.child("players").child(i).val().userid);
+	// 			$('#player' + i + '-wins').html(snapshot.child("players").child(i).val().wins);
+	// 			$('#player' + i + '-losses').html(snapshot.child("players").child(i).val().losses);
+	// 			$('#player' + i + '-draws').html(snapshot.child("players").child(i).val().draws);
+				
+	// 			console.log("what happens here" + newPlayerPosition );
+				
+	// 			turn = snapshot.val().turn;
+	// 			console.log("to here" );
+	// 			playerData[i].userid = snapshot.child("players").child(i).val().userid;
+	// 			playerData[i].wins = snapshot.child("players").child(i).val().wins;
+	// 			playerData[i].losses = snapshot.child("players").child(i).val().losses;
+	// 			playerData[i].draws = snapshot.child("players").child(i).val().draws;
+				
+	// 		}
+	// 		else{
+	// 			$('.hide-initially-player' + i).hide();
+	// 			$('.show-initially-player' + i).show();
+				
+
+	// 		}
+
+	// 	}
+	// })
+
+
+
+
+	
 	$('#player-name-submit').on("click", function(){
-		// capture the new players name 
-		console.log("this va;" + $('#player-name').val());
-		//hide add user on dom for this user - do this by adding the class hide
-        // $('.user-input-row').addClass('hide');
-    	$('.hide-initially-player' + newPlayerPosition).removeClass('hide');
-		$('#chat-history-div').removeClass('hide');
-		$('#chat-submit-div').removeClass('hide');
-		$('.show-initially-player' + newPlayerPosition).addClass('hide');
-		$('.show-initially-player').addClass('hide');
-		// $('.user-input-row').addClass('hide');
-		// timestamp: firebase.database.ServerValue.TIMESTAMP
-		// see which  position is free
-		// set turn to player 1 initially
-		database.child('turn').set(turn);
-		database.child('playerPosition').set(newPlayerPosition);
-		// database.child('newPlayerPosition').set(newPlayerPosition);
+		// **** prevent "" being entered.
+		newPlayerPosition++;
+		
 		if ( playerData[newPlayerPosition].userid === "" ) {
-			currentPlayer = $('#player-name').val();
-			console.log("currentPlayer" + currentPlayer);
+			
+			//hide add user on dom for this user - do this by adding the class hide
+	        
+	    	$('.hide-initially-player' + newPlayerPosition).show();
+			$('#chat-history-div').removeClass('hide');
+			$('#chat-submit-div').removeClass('hide');
+			$('.show-initially-player' + newPlayerPosition).hide();
+			$('.show-initially-player').addClass('hide');
+		
+			// database.child('turn').set(turn);
+			database.child('playerPosition').set(newPlayerPosition);
+			currentPlayer = $('#player-name').val().trim();
+
 			playerData[newPlayerPosition].userid = $('#player-name').val().trim();
 			playerDbObj.child(newPlayerPosition).set(playerData[newPlayerPosition]);
-			// set some local session storage - just for hiding the input box for current player only and not both
-			// var localData = 'player' + newPlayerPosition;
-			// sessionStorage.setItem('player', localData);
-			// if (sessionStorage.getItem('player') === localData ){
-			// 		$('.show-initially').hide();
-			// }
-			//move to next position in player object
-
-			newPlayerPosition = newPlayerPosition + 1;
-			// store this in the database
-			database.child('playerPosition').set(newPlayerPosition);
-			// set some local session storage - just for hiding the input box for current player only and not both
+		   
+			// remove user on disconnect
+			var presenceRef = playerDbObj.child(newPlayerPosition);
+			// // Write a string when this client loses connection
+			presenceRef.onDisconnect().remove();
+   
 		
-		} 
-	
-		// else if (!snapshot.child(newPlayerPosition).exists()) {
-		// 	playerDb.child(newPlayerPosition).set(playerData[newPlayerPosition]);
-		// }
-
-		// return false;
-
-		// firebase.onDisconnect.remove().child('')
+		}
 
 
 	})
@@ -136,7 +173,29 @@ $('document').ready(function(){
 
     	return false;
 	})
+
+	// set what happens on discconnect - need to reset the position
+	var positionRef = database.child("playerPosition");
+
+	if (playerData[1].userid === "")
+	{
+		positionRef.onDisconnect().set(0);
+	}
+    else if (playerData[2].userid === "")
+	{
+		positionRef.onDisconnect().set(1);
+	}    
+
 		
+	$('.gameplay').on('click', function(){
+		console.log($(this).value);
+		// set turns
+		// validate that there are tow users before play can begin
+		// track last guess
+		// see who won and set the scores
+		// track scores
+		
+	})
 
 })
 

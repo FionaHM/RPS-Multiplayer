@@ -39,12 +39,12 @@ h3, h4 {
 	min-height: 120px;
 	margin: 20px;
 }
-/*.hide-initially-player1, .hide-initially-player2 {
+.hide-initially-player1, .hide-initially-player2 {
 	display: none;
-}*/
-/*.show-initially-player1,  .show-initially-player2 {
+}
+.show-initially-player1,  .show-initially-player2 {
 	display: block;
-}*/
+}
 .panel {
 	height: 300px;
 	width: 80%;
