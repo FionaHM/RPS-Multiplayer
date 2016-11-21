@@ -27,7 +27,9 @@ h3, h4 {
 .row {
 	min-height: 100px;
 }
-
+.choice {
+	font-size: 40px;
+}
 #chat-input {
 	width: 65%;
 }
