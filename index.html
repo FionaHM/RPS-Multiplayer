@@ -31,10 +31,20 @@
 			<div class="col-md-2"></div>
 		</div> <!--  end of well -->
 	</div> <!-- end of first row -->
-	<div class="row hide" id="current-player">Who is it</div>
-	<div class="row hide" id="turn">Whose turn is it</div>
-	<!-- Start of Player Panel -->
 	<div class="row">
+		<div class="col-md-12 hide" id="current-player">Who is it</div>
+	</div>
+	<div class="row">
+		<div class="col-md-12 hide" id="turn">Whose turn is it</div>
+	</div>
+	<div class="row">
+		<div class="col-md-12" id="message"></div>
+	</div>
+		
+
+
+	<!-- Start of Player Panel -->
+	<div class="row row-min-height">
 		<div class="col-md-4">
 			<div class="panel panel-default">
 			  <div class="panel-body" id="player1">
@@ -51,13 +61,13 @@
 			<div class="panel panel-default">
 			  	<div class="panel-body">
 			  	<h4>Wins and Losses</h4>
-			  	<div class="row">
+			  	<div class="row row-min-height">
 			  		<div class="hide-initially-player1">Player 1</div>
 			  		<div class="hide-initially-player1 score">Wins: </div><div class="hide-initially-player1 score" id="player1-wins"></div><br>
 			  		<div class="hide-initially-player1 score">Losses: </div><div class="hide-initially-player1 score" id="player1-losses"></div><br>
 			  		<div class="score hide-initially-player1 score">Draws: </div><div class="hide-initially-player1 score" id="player1-draws"></div><br>
 			  	</div>
-				<div class="row">
+				<div class="row row-min-height">
 					<div class="hide-initially-player2">Player 2</div>
 					<div class="hide-initially-player2 score">Wins: </div><div class="hide-initially-player2 score" id="player2-wins"></div><br>
 					<div class="hide-initially-player2 score">Losses: </div><div class="hide-initially-player2 score" id="player2-losses"></div><br>
@@ -96,7 +106,7 @@
 					</div>
 				</div>
 			</div>
-			<div class="row">
+			<div class="row row-min-height">
 				<div class="col-md-12 text-center hide" id="chat-submit-div">
 					<input type="text" name="player" id="chat-input">
 					<button type="button" id="submit-chat" class="btn btn-default">Submit</button>
@@ -111,6 +121,9 @@
 </div>   <!-- End of Container -->
 <!-- Local Javascript File -->
 <script type="text/javascript" src="assets/javascript/javascript.js"></script>
+<!-- Link to Moment.js -->
+<script src="https://cdn.jsdelivr.net/momentjs/2.12.0/moment.min.js"></script>
+
 </body>
 
 </html>
