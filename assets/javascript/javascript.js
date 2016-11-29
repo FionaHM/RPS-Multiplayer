@@ -17,7 +17,8 @@ $('document').ready(function(){
 	var positionRef = database.child("playerPosition");
 	var currentPlayer = null;
 	var resetDOM = false;
-	var newPlayerPosition = 0;
+	var newPlayerPosition = 1;
+	var winnerSelected = false;
 	var currentPlayerNo = null;
 	var turn = 1;
 	var options = ['Rock', 'Paper', 'Scissors'];
@@ -56,6 +57,11 @@ $('document').ready(function(){
 	function selectOption(player, guess){
 		// if it is the current players turn then allow them to select
 		if (player === turn){
+			// move to next player
+			if (turn === 1){
+				turn = 2;
+				turnObj.set(turn);
+			}
 			// store previous as lastguess before setting current guess
 			playerData[player].lastGuess = playerData[player].guess;
 			// capture current guess
@@ -67,17 +73,17 @@ $('document').ready(function(){
 			playerData[player].choiceMade = true;
 			// update database with playerData object
 			playerDbObj.child(player).set(playerData[player]);
-			// change view on the DOM
+			// change view on the DOM for current player only
 			$('.player' + player + "-options").hide();
-			// console.log(guess +  " Guess");
-			$('#player' + player + "-choice").show();
+			$('#player' + player + "-choice").removeClass("hide");
 			$('#player' + player + "-choice").html(guess);
 			
-			// move to next player
-			if (turn === 1){
-				turn = 2;
-				turnObj.set(turn);
-			}
+			
+			// // move to next player
+			// else if (turn === 2){
+			// 	turn = 1;
+			// 	turnObj.set(turn);
+			// }
 			// only start when there are 2 players and each has made a choice
 			if ((turn === 2 ) && (playerData[2].choiceMade) && playerData[1].choiceMade){
 				playGame();
@@ -94,7 +100,7 @@ $('document').ready(function(){
 	// players selects an option
 	function playerSelection(player, guess){
 
-	
+		console.log(currentPlayer);
 		if ((currentPlayer === playerData[player].userid) && (!playerData[player].choiceMade)){
 			selectOption(player, guess);
 		}
@@ -115,6 +121,8 @@ $('document').ready(function(){
 			playerData[1].draws = playerData[1].draws + 1;
 			// console.log(playerData[player-1].draws);
 			playerDbObj.set(playerData);
+			winnerSelected = true;
+			database.child('winnerSelected').set(winnerSelected);
 
 		} 
 		else if (((playerData[player].guess === 'rock') && (playerData[player-1].guess === 'scissors' )) || ((playerData[player].guess === 'scissors') && (playerData[player-1].guess === 'paper' ))|| ((playerData[player].guess === 'paper') && (playerData[player-1].guess === 'rock' ))) {
@@ -124,6 +132,8 @@ $('document').ready(function(){
 			playerData[player].wins++;
 			playerData[player-1].losses++;
 			playerDbObj.set(playerData);
+			winnerSelected = true;
+			database.child('winnerSelected').set(winnerSelected);
 			
 		}
 		else if (((playerData[player-1].guess === 'rock') && (playerData[player].guess === 'scissors' )) || ((playerData[player-1].guess === 'scissors') && (playerData[player].guess === 'paper' ))|| ((playerData[player-1].guess === 'paper') && (playerData[player].guess === 'rock' ))) {
@@ -133,6 +143,8 @@ $('document').ready(function(){
 			playerData[player-1].wins++;
 			playerData[player].losses++;
 			playerDbObj.set(playerData);
+			winnerSelected = true;
+			database.child('winnerSelected').set(winnerSelected);
 			
 		}
 		// wait 4 secs before starting the next game
@@ -146,6 +158,9 @@ $('document').ready(function(){
 		displayMessage(message);
 		// console.log("in here + player" + player);
 		var player = turn;
+		// update the turn
+		turn = 1;
+		turnObj.set(turn);
 		// var playerNext = player - 1;
 		var prevPlayer = parseInt(player) - 1;
 		playerData[player].choiceMade = false;
@@ -155,12 +170,10 @@ $('document').ready(function(){
 		playerData[player].guess = '';
 		playerData[prevPlayer].guess = '';
 		playerDbObj.set(playerData);
+		winnerSelected = false;
+		database.child('winnerSelected').set(winnerSelected);
 
-		$('.choice').hide('');  //added
-		// $('.player2-choice').html('');
 
-		turn = 1;
-		turnObj.set(turn);
 
 	}
 
@@ -180,6 +193,7 @@ $('document').ready(function(){
 				$('#player' + i + '-paper').html(snapshot.child("players").child(i).val().options[1]);
 				$('#player' + i + '-scissors').html(snapshot.child("players").child(i).val().options[2]);
 				$('#player' + i + '-choice').html(snapshot.child("players").child(i).val().guess);
+				
 				// update the playerData object with the values in the database
 				playerData[i].userid = snapshot.child("players").child(i).val().userid;
 				playerData[i].wins = snapshot.child("players").child(i).val().wins;
@@ -190,6 +204,7 @@ $('document').ready(function(){
 				playerData[i].lastChat = snapshot.child("players").child(i).val().lastChat;
 				playerData[i].options = snapshot.child("players").child(i).val().options;
 				playerData[i].choiceMade = snapshot.child("players").child(i).val().choiceMade;
+
 				
 
 			}
@@ -201,12 +216,8 @@ $('document').ready(function(){
 
 		}
 
-		// place the most up to date position data in the newPlayerPosition variable
-		newPlayerPosition = snapshot.child("playerPosition").val();
-		console.log(currentPlayerNo + "val currentPlayer");
-		// if ((currentPlayerNo !== null) && (playerData[currentPlayerNo].choiceMade)){
-		// 	$('#player' + currentPlayerNo + '-choice').html(snapshot.child("players").child(currentPlayerNo).val().guess);
-		// }
+		// set flag for winner selected
+		winnerSelected = snapshot.val().winnerSelected;
 		// update the message displayed
 		$('#message').html(snapshot.child("message").val());
 		message = snapshot.child("message").val().message;
@@ -233,25 +244,39 @@ $('document').ready(function(){
 		
 	$('#player-name-submit').on('click', function(){
 		// **** prevent "" being entered.
-		newPlayerPosition++;
-		currentPlayerNo = newPlayerPosition;
-		// if no player at this  newPlayerPosition position - then add it
+		// newPlayerPosition++;
+		
+		console.log(newPlayerPosition);
+		for (var i = 1; i <= 2; i++){
+			// find the next available slot
+			if (playerData[i].userid === ""	){
+				newPlayerPosition = i;
+				// currentPlayerNo = newPlayerPosition;
+				console.log(newPlayerPosition);
+				//once position determined exit loop
+				break;
+			}
+		}
+		// console.log(newPlayerPosition);
+		// put player at the newPlayerPosition position - but double check it is empty first
+		console.log("userd" + playerData[newPlayerPosition].userid);
 		if ( playerData[newPlayerPosition].userid === "" ) {
-			//hide add user on dom for this user - do this by adding the class hide
+		//hide add user on dom for this user - do this by adding the class hide
 	    	$('.hide-initially-player' + newPlayerPosition).show();
 			$('.show-initially-player' + newPlayerPosition).hide();
 			$('.show-initially-player').addClass('hide');
 			// set the game options to be displayed
 			playerData[newPlayerPosition].options = options;
 			// set the current player position in the database
-			database.child('playerPosition').set(newPlayerPosition);
+			// database.child('playerPosition').set(newPlayerPosition);
 			// set the current player for this current instance of the game
 			currentPlayer = $('#player-name').val().trim();
-			console.log(currentPlayer + "cp");
-			$('#current-player').removeClass('hide');
-			$('#current-player').html("Logged-In Player: " + currentPlayer + '<br>');
-			// save to the playerData object
 			playerData[newPlayerPosition].userid = $('#player-name').val().trim();
+			
+			// console.log(currentPlayer + "cp");
+			$('#current-player').removeClass('hide');
+			$('#current-player').html("Logged-In Player: " + playerData[newPlayerPosition].userid + '<br>');
+			// save to the playerData object
 			// save to the database
 			playerDbObj.child(newPlayerPosition).set(playerData[newPlayerPosition]);
 			// remove user on disconnect
@@ -281,26 +306,35 @@ $('document').ready(function(){
 	
 	//player 1 selects
 	$('.player1-options').on('click', function(){
-		var player = $(this).data("player");
-		var guess = $(this).data("guess");
-		console.log(player + "player");
-		playerSelection(player, guess);
+		//only allow player whose turn it is to choose
+		console.log("position" + newPlayerPosition + "turn" + turn);
+		if ( newPlayerPosition = turn ){
+			var player = $(this).data("player");
+			var guess = $(this).data("guess");
+			console.log(player + "player" +  guess + "guess");
+			playerSelection(player, guess);
+		}
+		
 
 		return false;
 	});
 	//player 2 selects
 	$('.player2-options').on('click', function(){
-		var player = $(this).data("player");
-		var guess = $(this).data("guess");
-		console.log(player + "player");
-		playerSelection(player, guess);	
-
+		///only allow player whose turn it is to choose
+		console.log("position" + newPlayerPosition + "turn" + turn);
+		if ( newPlayerPosition = turn ){
+			var player = $(this).data("player");
+			var guess = $(this).data("guess");
+			console.log(player + "player");
+			playerSelection(player, guess);	
+		}
 		return false;
 	});	
 
 
 	// Chat section 
 	$('#submit-chat').on('click', function(){
+		// console.log("position" + newPlayerPosition + "turn" + turn);
 		chat.chatInput = $('#chat-input').val().trim();
 		chat.chatUser = currentPlayer;
 		// clear chat input
@@ -340,25 +374,16 @@ $('document').ready(function(){
 
 
 
-	// chatDbObj.orderByKey().on("child_changed", function(childSnapshot, prevChildKey) {
-	// 	// childSnapshot pulls in the lastest chat addition to the db.
-	// 	if (childSnapshot.exists()) {
-	// 		//  appends the contents of the chat object to the dom
-	// 	 	var newdate = moment(childSnapshot.val().timestamp).format("hh:mm:ss");
-	// 		var newPost = childSnapshot.val();
-	// 		// for (var i=1; i<=objLength; i++ ){
-	// 		$('#chat-history').append(newPost + '<br>');
-			
-	// 	}
-
-	// });
-	// set initial values
-	database.child('playerPosition').set(newPlayerPosition);
+	//	set initial values
+	// database.child('playerPosition').set(newPlayerPosition);
 	turnObj.set(turn);
 	database.child('message').set(message);
 	
-	// clear all chat when one player leaves
-	// console.log("current plauer " + currentPlayerNo);
+	// clear DOM
+	if( winnerSelected ){
+		$('.choice').addClass("hide");
+	}
+
 	
 	
 	// reset player position on disconnect to allow new players to join
@@ -381,7 +406,6 @@ $('document').ready(function(){
 
 	}
     
-
     // var exitChat = chatDbObj;
     // chat.chatInput: "player has left";
 
