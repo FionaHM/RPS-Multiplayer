@@ -156,6 +156,9 @@ $('document').ready(function(){
 		playerData[prevPlayer].guess = '';
 		playerDbObj.set(playerData);
 
+		$('.choice').hide('');  //added
+		// $('.player2-choice').html('');
+
 		turn = 1;
 		turnObj.set(turn);
 
