@@ -24,19 +24,20 @@ label {
 h3, h4 {
 	text-align: center;
 }
+
 .row-min-height {
 	min-height: 100px;
 }
 .choice {
 	font-size: 40px;
 }
-#chat-input {
-	width: 65%;
-}
+
 .score {
 	float: left;
 }
-
+.choice {
+	color:red;
+}
 .well {
 	min-height: 120px;
 	margin: 20px;
@@ -49,8 +50,8 @@ h3, h4 {
 }
 .panel {
 	height: 300px;
-	width: 80%;
-	margin: 10%;
+	/*width: 70%;*/
+	margin: 5%;
 	padding: 20px;
 }
 .chat-panel{
@@ -58,8 +59,40 @@ h3, h4 {
 	margin-bottom: 10px;
 	margin-top: 10px;
 }
-
-
 .btn {
 	vertical-align: top;
+}
+#player1-name, #player2-name{
+	color: blue;
+	text-decoration: underline;
+/*	text-align: center;*/
+
+}
+.choice {
+	color:red;
+}
+.score {
+	padding-right: 3px;
+}
+#chat-input {
+	width: 65%;
+}
+#turn{
+	text-align: center;
+	/*color: red;*/
+}
+#current-player{
+	color: red;
+	text-decoration: underline;
+}
+#player1, #player2{
+	color: blue;
+	line-height: 1.5;
+	font-size: 18px;
+	text-decoration: underline;
+}
+#message {
+	font-style: bold;
+	font-size: 30px;
+	color: blue;
 }

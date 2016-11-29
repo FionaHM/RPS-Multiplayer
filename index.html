@@ -22,7 +22,7 @@
 				    <label for="player-name">Enter Your Name: </label>
 				</div>
 				<div class="col-md-3 text-center">
-					<input type="text" name="player" id="player-name">
+					<input type="text" name="player" id="player-name" maxlength="10">
 				</div>
 				<div class="col-md-6 text-center">
 					<button type="button" id="player-name-submit" class="btn btn-default">Start</button>
@@ -32,27 +32,25 @@
 		</div> <!--  end of well -->
 	</div> <!-- end of first row -->
 	<div class="row">
-		<div class="col-md-12 hide" id="current-player">Who is it</div>
+		<div class="col-md-4 hide" id="current-player">Who is it</div>
+		<div class="col-md-8" id="message"></div>
+		<!-- <div class="col-md-4"></div> -->
 	</div>
-	<div class="row">
-		<div class="col-md-12 hide" id="turn">Whose turn is it</div>
-	</div>
-	<div class="row">
+	<!-- <div class="row">
 		<div class="col-md-12" id="message"></div>
 	</div>
-		
+		 -->
 
 
 	<!-- Start of Player Panel -->
-	<div class="row row-min-height">
-		<div class="col-md-4">
+		<div class="col-md-4 text-center">
 			<div class="panel panel-default">
-			  <div class="panel-body" id="player1">
-			    <h3 class="show-initially-player1" id="waiting-player2">Waiting for Player1</h3>
-			    <h3 class="hide-initially-player1" id="player1-name">Player1</h3>
-			    <h3 class="hide-initially-player1 player1-options" id="player1-rock" data-guess="rock" data-player="1"></h3>
-			    <h3 class="hide-initially-player1 player1-options" id="player1-paper" data-guess="paper" data-player="1"></h3>
-			    <h3 class="hide-initially-player1 player1-options" id="player1-scissors" data-guess="scissors" data-player="1"></h3>
+			  <div class="panel-body">
+			    <h3 class="show-initially-player1" id="waiting-player1">Waiting for Player1</h3>
+				<h3 class="hide-initially-player1" id="player1">Player1</h3>
+			    <h3 class="hide-initially-player1 player1-options" id="player1-rock" data-guess="Rock" data-player="1"></h3>
+			    <h3 class="hide-initially-player1 player1-options" id="player1-paper" data-guess="Paper" data-player="1"></h3>
+			    <h3 class="hide-initially-player1 player1-options" id="player1-scissors" data-guess="Scissors" data-player="1"></h3>
 			    <h3 class="choice hide" id="player1-choice" data-player="1"></h3>
 			  </div>
 			</div>
@@ -60,36 +58,43 @@
 		<div class="col-md-4">
 			<div class="panel panel-default">
 			  	<div class="panel-body">
-			  	<h4>Wins and Losses</h4>
-			  	<div class="row row-min-height">
-			  		<div class="hide-initially-player1">Player 1</div>
-			  		<div class="hide-initially-player1 score">Wins: </div><div class="hide-initially-player1 score" id="player1-wins"></div><br>
-			  		<div class="hide-initially-player1 score">Losses: </div><div class="hide-initially-player1 score" id="player1-losses"></div><br>
-			  		<div class="score hide-initially-player1 score">Draws: </div><div class="hide-initially-player1 score" id="player1-draws"></div><br>
-			  	</div>
-				<div class="row row-min-height">
-					<div class="hide-initially-player2">Player 2</div>
-					<div class="hide-initially-player2 score">Wins: </div><div class="hide-initially-player2 score" id="player2-wins"></div><br>
-					<div class="hide-initially-player2 score">Losses: </div><div class="hide-initially-player2 score" id="player2-losses"></div><br>
-					<div class="hide-initially-player2 score">Draws: </div><div class="hide-initially-player2 score" id="player2-draws"></div><br>
+				  	<div class="row">
+						<div class="col-md-12 hide" id="turn">Whose turn is it</div>
+					</div>
+				  	<h4>Wins and Losses</h4>
+				  	<div class="row row-min-height">
+				  		
+						<div class="col-md-6">
+<!-- maybe add a table -->
+					  		<div class="hide-initially-player1"><u>Player 1</u></div>
+					  		<div class="hide-initially-player1" id="player1-name">Player 1</div>
+					  		<div class="hide-initially-player1 score">Wins:</div><div class="hide-initially-player1 score" id="player1-wins"></div><br>
+					  		<div class="hide-initially-player1 score">Losses:</div><div class="hide-initially-player1 score" id="player1-losses"></div><br>
+					  		<div class="score hide-initially-player1 score">Draws:</div><div class="hide-initially-player1 score" id="player1-draws"></div><br>
+					  	</div>
+					  	<div class="col-md-6">
+							<div class="hide-initially-player2"><u>Player 2</u></div>
+								<div class="hide-initially-player2" id="player2">Player 1</div>
+							<div class="hide-initially-player2 score">Wins: </div><div class="hide-initially-player2 score" id="player2-wins"></div><br>
+							<div class="hide-initially-player2 score">Losses: </div><div class="hide-initially-player2 score" id="player2-losses"></div><br>
+							<div class="hide-initially-player2 score">Draws: </div><div class="hide-initially-player2 score" id="player2-draws"></div><br>
+						</div>
+				  	</div>
 				</div>
-
-			  </div>
 			</div>
-		</div>
+		</div>	
 		<div class="col-md-4 text-center">
-			<div class="panel panel-default ">
+			<div class="panel panel-default">
 			  <div class="panel-body">
 			    <h3 class="show-initially-player2" id="waiting-player2">Waiting for Player2</h3>
 				<h3 class="hide-initially-player2" id="player2-name">Player2</h3>
-			    <h3 class="hide-initially-player2 player2-options" id="player2-rock" data-guess="rock" data-player="2"></h3>
-			    <h3 class="hide-initially-player2 player2-options" id="player2-paper" data-guess="paper" data-player="2"></h3>
-			    <h3 class="hide-initially-player2 player2-options" id="player2-scissors" data-guess="scissors" data-player="2"></h3>
+			    <h3 class="hide-initially-player2 player2-options" id="player2-rock" data-guess="Rock" data-player="2"></h3>
+			    <h3 class="hide-initially-player2 player2-options" id="player2-paper" data-guess="Paper" data-player="2"></h3>
+			    <h3 class="hide-initially-player2 player2-options" id="player2-scissors" data-guess="Scissors" data-player="2"></h3>
 			    <h3 class="choice hide" id="player2-choice" data-player="1"></h3>
 			  </div>
 			</div>
 		</div>
-	</div>
 	<!-- Start of Chat Panel -->
 	<div class="row hide" id="chat-history-div">
 		<div class="col-md-2"></div>

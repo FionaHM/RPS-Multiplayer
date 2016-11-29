@@ -94,6 +94,7 @@ $('document').ready(function(){
 
 	function displayMessage(message){
 		// display message function
+		console.log("value passed" +  message);
 		database.child("message").set(message);
 	}
 
@@ -115,6 +116,7 @@ $('document').ready(function(){
 		if (playerData[player].guess === playerData[player-1].guess){
 			//draw
 			message =  "Its a draw!";
+			console.log("draw:" +  message);
 			displayMessage(message);
 			playerData[2].draws = playerData[2].draws + 1;
 			// console.log(playerData[player].draws);
@@ -125,10 +127,12 @@ $('document').ready(function(){
 			database.child('winnerSelected').set(winnerSelected);
 
 		} 
-		else if (((playerData[player].guess === 'rock') && (playerData[player-1].guess === 'scissors' )) || ((playerData[player].guess === 'scissors') && (playerData[player-1].guess === 'paper' ))|| ((playerData[player].guess === 'paper') && (playerData[player-1].guess === 'rock' ))) {
+		else if (((playerData[player].guess === 'Rock') && (playerData[player-1].guess === 'Scissors' )) || ((playerData[player].guess === 'Scissors') && (playerData[player-1].guess === 'Paper' ))|| ((playerData[player].guess === 'Paper') && (playerData[player-1].guess === 'Rock' ))) {
 			// palyer 2 wins
 			message = playerData[player].userid + " has won this round!";
+			 console.log("p2 wins:" +  message);
 			displayMessage(message);
+			// console.log(message);
 			playerData[player].wins++;
 			playerData[player-1].losses++;
 			playerDbObj.set(playerData);
@@ -136,9 +140,10 @@ $('document').ready(function(){
 			database.child('winnerSelected').set(winnerSelected);
 			
 		}
-		else if (((playerData[player-1].guess === 'rock') && (playerData[player].guess === 'scissors' )) || ((playerData[player-1].guess === 'scissors') && (playerData[player].guess === 'paper' ))|| ((playerData[player-1].guess === 'paper') && (playerData[player].guess === 'rock' ))) {
+		else if (((playerData[player-1].guess === 'Rock') && (playerData[player].guess === 'Rcissors' )) || ((playerData[player-1].guess === 'Scissors') && (playerData[player].guess === 'Paper' ))|| ((playerData[player-1].guess === 'Paper') && (playerData[player].guess === 'Rock' ))) {
 			// palyer 1 wins
 			message = playerData[player-1].userid + " has won this round!";
+			console.log("p1 wins:" +  message);
 			displayMessage(message);
 			playerData[player-1].wins++;
 			playerData[player].losses++;
@@ -155,8 +160,9 @@ $('document').ready(function(){
 	function resetNextPlay(){
 		// reset for next game
 		message = '';
+		console.log("reset:" +  message);
 		displayMessage(message);
-		// console.log("in here + player" + player);
+		// console.log(message);
 		var player = turn;
 		// update the turn
 		turn = 1;
@@ -185,6 +191,7 @@ $('document').ready(function(){
 				$('.hide-initially-player' + i).show();
 				$('.show-initially-player' + i).hide();
 				// display data retrieved on the DOM for each player
+				$('#player' + i).html(snapshot.child("players").child(i).val().userid);
 				$('#player' + i + '-name').html(snapshot.child("players").child(i).val().userid);
 				$('#player' + i + '-wins').html(snapshot.child("players").child(i).val().wins);
 				$('#player' + i + '-losses').html(snapshot.child("players").child(i).val().losses);
@@ -220,11 +227,12 @@ $('document').ready(function(){
 		winnerSelected = snapshot.val().winnerSelected;
 		// update the message displayed
 		$('#message').html(snapshot.child("message").val());
-		message = snapshot.child("message").val().message;
+		// message = snapshot.child("message").val().message;
+		console.log("db" + message);
 		// if both players exist then display chat and other information
 		if (snapshot.child("players").child(1).exists() && snapshot.child("players").child(2).exists()){
 			$('#turn').removeClass('hide');
-			$('#turn').html("It is " + playerData[turn].userid + "'s turn to choose.");
+			$('#turn').html("It is <strong>" + playerData[turn].userid + "'s</strong> turn to choose.");
 			$('.show-initially-player').addClass('hide');
 			$('#chat-history-div').removeClass('hide');
 		    $('#chat-submit-div').removeClass('hide');
@@ -267,13 +275,10 @@ $('document').ready(function(){
 			$('.show-initially-player').addClass('hide');
 			// set the game options to be displayed
 			playerData[newPlayerPosition].options = options;
-			// set the current player position in the database
-			// database.child('playerPosition').set(newPlayerPosition);
 			// set the current player for this current instance of the game
 			currentPlayer = $('#player-name').val().trim();
-			playerData[newPlayerPosition].userid = $('#player-name').val().trim();
-			
-			// console.log(currentPlayer + "cp");
+			playerData[newPlayerPosition].userid = currentPlayer;
+			$('#player' + newPlayerPosition).html(currentPlayer);
 			$('#current-player').removeClass('hide');
 			$('#current-player').html("Logged-In Player: " + playerData[newPlayerPosition].userid + '<br>');
 			// save to the playerData object
@@ -378,6 +383,7 @@ $('document').ready(function(){
 	// database.child('playerPosition').set(newPlayerPosition);
 	turnObj.set(turn);
 	database.child('message').set(message);
+	console.log(message);
 	
 	// clear DOM
 	if( winnerSelected ){
