@@ -31,9 +31,29 @@
 			<div class="col-md-2"></div>
 		</div> <!--  end of well -->
 	</div> <!-- end of first row -->
+<!-- error modal -->
+	<div class="modal">
+	  <div class="modal-dialog" role="document">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <h4 class="modal-title">Error!</h4>
+	      </div>
+	      <div class="modal-body">
+	        <p  id="modalMessage"></p>
+	      </div>
+	      <div class="modal-footer">
+	        <button type="button" class="btn btn-secondary" data-dismiss="modal" id="closeModal">Close</button>
+	      </div>
+	    </div><!-- /.modal-content -->
+	  </div><!-- /.modal-dialog -->
+	</div><!-- /.modal -->
 	<div class="row">
 		<div class="col-md-4 hide" id="current-player">Who is it</div>
-		<div class="col-md-8" id="message"></div>
+		<div class="col-md-4"></div>
+		<div class="col-md-4"></div>
+	</div>
+	<div class="row">
+		<div class="col-md-12 text-center" id="message"></div>
 		<!-- <div class="col-md-4"></div> -->
 	</div>
 	<!-- <div class="row">
@@ -56,28 +76,37 @@
 			</div>
 		</div>
 		<div class="col-md-4">
-			<div class="panel panel-default">
+			<div class="panel panel-default" id="panel-score">
 			  	<div class="panel-body">
 				  	<div class="row">
 						<div class="col-md-12 hide" id="turn">Whose turn is it</div>
 					</div>
+					<br>
 				  	<h4>Wins and Losses</h4>
 				  	<div class="row row-min-height">
 				  		
 						<div class="col-md-6">
-<!-- maybe add a table -->
-					  		<div class="hide-initially-player1"><u>Player 1</u></div>
-					  		<div class="hide-initially-player1" id="player1-name">Player 1</div>
-					  		<div class="hide-initially-player1 score">Wins:</div><div class="hide-initially-player1 score" id="player1-wins"></div><br>
-					  		<div class="hide-initially-player1 score">Losses:</div><div class="hide-initially-player1 score" id="player1-losses"></div><br>
-					  		<div class="score hide-initially-player1 score">Draws:</div><div class="hide-initially-player1 score" id="player1-draws"></div><br>
+							<!-- <div class="col-md-2"></div> -->
+							<div class="col-xs-6 col-md-12">
+						  		<div class="hide-initially-player1"><u>Player 1</u></div><br>
+						  		<div class="hide-initially-player1" id="player1-name">Player 1</div>
+						  		<div class="hide-initially-player1 score">Wins:</div><div class="hide-initially-player1 score" id="player1-wins"></div><br>
+						  		<div class="hide-initially-player1 score">Losses:</div><div class="hide-initially-player1 score" id="player1-losses"></div><br>
+						  		<div class="score hide-initially-player1 score">Draws:</div><div class="hide-initially-player1 score" id="player1-draws"></div><br>
+						  	</div>
+						  	<!-- <div class="col-md-2"></div> -->
 					  	</div>
+					  <!-- 	<div class="col-md-2"></div> -->
 					  	<div class="col-md-6">
-							<div class="hide-initially-player2"><u>Player 2</u></div>
-								<div class="hide-initially-player2" id="player2">Player 1</div>
-							<div class="hide-initially-player2 score">Wins: </div><div class="hide-initially-player2 score" id="player2-wins"></div><br>
-							<div class="hide-initially-player2 score">Losses: </div><div class="hide-initially-player2 score" id="player2-losses"></div><br>
-							<div class="hide-initially-player2 score">Draws: </div><div class="hide-initially-player2 score" id="player2-draws"></div><br>
+					  		<!-- <div class="col-md-1"></div> -->
+					  		<div class="col-xs-6 col-md-12">
+								<div class="hide-initially-player2"><u>Player 2</u></div><br>
+									<div class="hide-initially-player2" id="player2-name">Player 2</div>
+								<div class="hide-initially-player2 score">Wins: </div><div class="hide-initially-player2 score" id="player2-wins"></div><br>
+								<div class="hide-initially-player2 score">Losses: </div><div class="hide-initially-player2 score" id="player2-losses"></div><br>
+								<div class="hide-initially-player2 score">Draws: </div><div class="hide-initially-player2 score" id="player2-draws"></div><br>
+							</div>
+							<!-- <div class="col-md-1"></div> -->
 						</div>
 				  	</div>
 				</div>
@@ -87,7 +116,7 @@
 			<div class="panel panel-default">
 			  <div class="panel-body">
 			    <h3 class="show-initially-player2" id="waiting-player2">Waiting for Player2</h3>
-				<h3 class="hide-initially-player2" id="player2-name">Player2</h3>
+				<h3 class="hide-initially-player2" id="player2">Player2</h3>
 			    <h3 class="hide-initially-player2 player2-options" id="player2-rock" data-guess="Rock" data-player="2"></h3>
 			    <h3 class="hide-initially-player2 player2-options" id="player2-paper" data-guess="Paper" data-player="2"></h3>
 			    <h3 class="hide-initially-player2 player2-options" id="player2-scissors" data-guess="Scissors" data-player="2"></h3>
@@ -101,7 +130,7 @@
 		<div class="col-s-12 col-md-8">
 			<div class="row">
 				<div class="col-md-12 text-center">
-				 	<h3>Chat History</h3>
+				 	<h3 id="chatHistory">Chat History</h3>
 					<div class="panel panel-default chat-panel">
 						<div class="panel-body">
 						  	<!-- Displays chat history -->

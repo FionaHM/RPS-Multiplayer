@@ -78,12 +78,6 @@ $('document').ready(function(){
 			$('#player' + player + "-choice").removeClass("hide");
 			$('#player' + player + "-choice").html(guess);
 			
-			
-			// // move to next player
-			// else if (turn === 2){
-			// 	turn = 1;
-			// 	turnObj.set(turn);
-			// }
 			// only start when there are 2 players and each has made a choice
 			if ((turn === 2 ) && (playerData[2].choiceMade) && playerData[1].choiceMade){
 				playGame();
@@ -92,18 +86,25 @@ $('document').ready(function(){
 		
 	}; // end of function selectOption
 
+    // display message function
 	function displayMessage(message){
-		// display message function
-		console.log("value passed" +  message);
 		database.child("message").set(message);
 	}
 
 	// players selects an option
-	function playerSelection(player, guess){
-
-		console.log(currentPlayer);
+	function playerSelection(player, guess, draw){
 		if ((currentPlayer === playerData[player].userid) && (!playerData[player].choiceMade)){
 			selectOption(player, guess);
+		}
+	}
+
+	// Game play section
+	function playerTurnMakeGuess(sendPlayerData){
+		//only allow player whose turn it is to choose	
+		if ( newPlayerPosition = turn ){
+			var player = $(sendPlayerData).data("player");
+			var guess = $(sendPlayerData).data("guess");
+			playerSelection(player, guess);
 		}
 	}
 
@@ -111,45 +112,22 @@ $('document').ready(function(){
 		// if its player 2's turn and both players have selected an option
 		// then see who won 
 		// display scores and reset for another round of RPS after 4 seconds
-		var player = turn;
+		var playerTwo = turn;
+		var playerOne = playerTwo-1;
 		// check who won
-		if (playerData[player].guess === playerData[player-1].guess){
-			//draw
-			message =  "Its a draw!";
-			console.log("draw:" +  message);
-			displayMessage(message);
-			playerData[2].draws = playerData[2].draws + 1;
-			// console.log(playerData[player].draws);
-			playerData[1].draws = playerData[1].draws + 1;
-			// console.log(playerData[player-1].draws);
-			playerDbObj.set(playerData);
-			winnerSelected = true;
-			database.child('winnerSelected').set(winnerSelected);
+		if (playerData[playerTwo].guess === playerData[playerOne].guess){
+
+			updateWinner(playerOne, playerTwo, "draw");
 
 		} 
-		else if (((playerData[player].guess === 'Rock') && (playerData[player-1].guess === 'Scissors' )) || ((playerData[player].guess === 'Scissors') && (playerData[player-1].guess === 'Paper' ))|| ((playerData[player].guess === 'Paper') && (playerData[player-1].guess === 'Rock' ))) {
-			// palyer 2 wins
-			message = playerData[player].userid + " has won this round!";
-			 console.log("p2 wins:" +  message);
-			displayMessage(message);
-			// console.log(message);
-			playerData[player].wins++;
-			playerData[player-1].losses++;
-			playerDbObj.set(playerData);
-			winnerSelected = true;
-			database.child('winnerSelected').set(winnerSelected);
+		else if (((playerData[playerTwo].guess === 'Rock') && (playerData[playerOne].guess === 'Scissors' )) || ((playerData[playerTwo].guess === 'Scissors') && (playerData[playerOne].guess === 'Paper' ))|| ((playerData[playerTwo].guess === 'Paper') && (playerData[playerOne].guess === 'Rock' ))) {
+			
+			updateWinner(playerTwo, playerOne, "");
 			
 		}
-		else if (((playerData[player-1].guess === 'Rock') && (playerData[player].guess === 'Rcissors' )) || ((playerData[player-1].guess === 'Scissors') && (playerData[player].guess === 'Paper' ))|| ((playerData[player-1].guess === 'Paper') && (playerData[player].guess === 'Rock' ))) {
-			// palyer 1 wins
-			message = playerData[player-1].userid + " has won this round!";
-			console.log("p1 wins:" +  message);
-			displayMessage(message);
-			playerData[player-1].wins++;
-			playerData[player].losses++;
-			playerDbObj.set(playerData);
-			winnerSelected = true;
-			database.child('winnerSelected').set(winnerSelected);
+		else if (((playerData[playerOne].guess === 'Rock') && (playerData[playerTwo].guess === 'Scissors' )) || ((playerData[playerOne].guess === 'Scissors') && (playerData[playerTwo].guess === 'Paper' ))|| ((playerData[playerOne].guess === 'Paper') && (playerData[playerTwo].guess === 'Rock' ))) {
+			
+			updateWinner(playerOne, playerTwo, "");
 			
 		}
 		// wait 4 secs before starting the next game
@@ -157,32 +135,65 @@ $('document').ready(function(){
 
 	}
 
+	// function to determine winner
+	function updateWinner(winner, loser, draw){
+		// function to determine winner
+		if (draw !== ""){		
+		    // set the message to be displayed on screen 
+ 			message =  "Its a draw!";
+ 			playerData[winner].draws++;
+			playerData[loser].draws++;
+		} else{
+			// set the message to be displayed on screen 
+			message = playerData[winner].userid + " has won this round!";
+			// increment the player counters for a win
+			playerData[winner].wins++;
+			playerData[loser].losses++;
+		}
+		// update the database
+		playerDbObj.set(playerData);
+		//  message to be displayed on screen 
+		displayMessage(message);
+		// set flag to indicate a winner has been selected
+		winnerSelected = true;
+		// update the database
+		database.child('winnerSelected').set(winnerSelected);
+	}
+
+
+	function setResetValues(player){
+		var prevPlayer = parseInt(player) - 1;
+		playerData[player].choiceMade = false;
+		// playerData[prevPlayer].choiceMade = false;
+		playerData[player].options = options;
+		// playerData[prevPlayer].options = options;
+		playerData[player].guess = '';
+		// playerData[prevPlayer].guess = '';
+		
+	}
+
 	function resetNextPlay(){
 		// reset for next game
 		message = '';
-		console.log("reset:" +  message);
 		displayMessage(message);
 		// console.log(message);
 		var player = turn;
 		// update the turn
 		turn = 1;
 		turnObj.set(turn);
-		// var playerNext = player - 1;
+		// reset game display for each player
+		setResetValues(player);
 		var prevPlayer = parseInt(player) - 1;
-		playerData[player].choiceMade = false;
-		playerData[prevPlayer].choiceMade = false;
-		playerData[player].options = options;
-		playerData[prevPlayer].options = options;
-		playerData[player].guess = '';
-		playerData[prevPlayer].guess = '';
+		setResetValues(prevPlayer);
+		// save to the database
 		playerDbObj.set(playerData);
+		// update flag
 		winnerSelected = false;
 		database.child('winnerSelected').set(winnerSelected);
 
-
-
 	}
-
+   
+    // get latest data from firebase database
 	database.on("value", function(snapshot) {
 	/// on load check to see if the players exist and put them on the DOM if they do
 	 	for (var i=1; i <= objLength; i++){
@@ -212,8 +223,6 @@ $('document').ready(function(){
 				playerData[i].options = snapshot.child("players").child(i).val().options;
 				playerData[i].choiceMade = snapshot.child("players").child(i).val().choiceMade;
 
-				
-
 			}
 			else{
 				// if a player does not exist any longer - reset the DOM
@@ -227,8 +236,6 @@ $('document').ready(function(){
 		winnerSelected = snapshot.val().winnerSelected;
 		// update the message displayed
 		$('#message').html(snapshot.child("message").val());
-		// message = snapshot.child("message").val().message;
-		console.log("db" + message);
 		// if both players exist then display chat and other information
 		if (snapshot.child("players").child(1).exists() && snapshot.child("players").child(2).exists()){
 			$('#turn').removeClass('hide');
@@ -243,196 +250,122 @@ $('document').ready(function(){
 		}
 		// set the turn variable to the value in the database
 		turn = snapshot.val().turn;
-
-		
-
 	
 	});
-
-		
+	// close modal box
+	$('#closeModal').on('click', function(){
+		$('.modal').hide();
+	})
+	// select player
 	$('#player-name-submit').on('click', function(){
-		// **** prevent "" being entered.
-		// newPlayerPosition++;
-		
-		console.log(newPlayerPosition);
-		for (var i = 1; i <= 2; i++){
-			// find the next available slot
-			if (playerData[i].userid === ""	){
-				newPlayerPosition = i;
-				// currentPlayerNo = newPlayerPosition;
-				console.log(newPlayerPosition);
-				//once position determined exit loop
-				break;
+		//  prevent "" being entered.
+		if ($('#player-name').val().trim() === ""){
+			$('.modal').show();
+			$('#modalMessage').html("Please enter a value!");
+		} 
+		else{
+			for (var i = 1; i <= 2; i++){
+				// find the next available slot
+				if (playerData[i].userid === ""	){
+					newPlayerPosition = i;			
+					//once position determined exit loop
+					break;
+				}
 			}
-		}
-		// console.log(newPlayerPosition);
-		// put player at the newPlayerPosition position - but double check it is empty first
-		console.log("userd" + playerData[newPlayerPosition].userid);
-		if ( playerData[newPlayerPosition].userid === "" ) {
-		//hide add user on dom for this user - do this by adding the class hide
-	    	$('.hide-initially-player' + newPlayerPosition).show();
-			$('.show-initially-player' + newPlayerPosition).hide();
-			$('.show-initially-player').addClass('hide');
-			// set the game options to be displayed
-			playerData[newPlayerPosition].options = options;
-			// set the current player for this current instance of the game
-			currentPlayer = $('#player-name').val().trim();
-			playerData[newPlayerPosition].userid = currentPlayer;
-			$('#player' + newPlayerPosition).html(currentPlayer);
-			$('#current-player').removeClass('hide');
-			$('#current-player').html("Logged-In Player: " + playerData[newPlayerPosition].userid + '<br>');
-			// save to the playerData object
-			// save to the database
-			playerDbObj.child(newPlayerPosition).set(playerData[newPlayerPosition]);
-			// remove user on disconnect
-			var presenceRef = playerDbObj.child(newPlayerPosition);
-			presenceRef.onDisconnect().remove();
-			// put the game options on the DOM for the current player
-			for (var j = 0; j < options.length; j++){
-				var id = ('#player' + newPlayerPosition + '-' + playerData[newPlayerPosition].options[j]).toLowerCase();
-				$(id).show();
-				$(id).html(playerData[newPlayerPosition].options[j]);
-			}
+			// put player at the newPlayerPosition position - but double check it is empty first
+			if ( playerData[newPlayerPosition].userid === "" ) {
+			//hide add user on dom for this user - do this by adding the class hide
+		    	$('.hide-initially-player' + newPlayerPosition).show();
+				$('.show-initially-player' + newPlayerPosition).hide();
+				$('.show-initially-player').addClass('hide');
+				// set the game options to be displayed
+				playerData[newPlayerPosition].options = options;
+				// set the current player for this current instance of the game
+				currentPlayer = $('#player-name').val().trim();
+				playerData[newPlayerPosition].userid = currentPlayer;
+				$('#player' + newPlayerPosition).html(currentPlayer);
+				$('#current-player').removeClass('hide');
+				$('#current-player').html("Logged-In Player: <strong>" + playerData[newPlayerPosition].userid + '</strong><br>');
+				// save to the playerData object
+				// save to the database
+				playerDbObj.child(newPlayerPosition).set(playerData[newPlayerPosition]);
+				// remove user on disconnect
+				var presenceRef = playerDbObj.child(newPlayerPosition);
+				presenceRef.onDisconnect().remove();
+				// put the game options on the DOM for the current player
+				for (var j = 0; j < options.length; j++){
+					var id = ('#player' + newPlayerPosition + '-' + playerData[newPlayerPosition].options[j]).toLowerCase();
+					$(id).show();
+					$(id).html(playerData[newPlayerPosition].options[j]);
+				}
+				// chat that a new player has just joined
+				var newChatRef = chatDbObj.push();
+				chat.chatInput = "<strong> A new player has joined!</strong>";
+				newChat();
 
-			var newPostRef = chatDbObj.push();
-		    if (currentPlayer !== ""){
-			    newPostRef.onDisconnect().set({
-				chatInput:  " has left",
-				chatUser: currentPlayer, 
-				timestamp: firebase.database.ServerValue.TIMESTAMP
-				})
+				// on disconnect send a message to the chat
+				var newPostRef = chatDbObj.push();
+			    if (currentPlayer !== ""){
+				    newPostRef.onDisconnect().set({
+					chatInput:  "<strong>This player has just left!</strong>",
+					chatUser: currentPlayer, 
+					timestamp: firebase.database.ServerValue.TIMESTAMP
+					})
+				}
+
 			}
-		}
+		} // end else 
 
         return false;
 	});
 
-	// Game play section
-	
 	//player 1 selects
 	$('.player1-options').on('click', function(){
-		//only allow player whose turn it is to choose
-		console.log("position" + newPlayerPosition + "turn" + turn);
-		if ( newPlayerPosition = turn ){
-			var player = $(this).data("player");
-			var guess = $(this).data("guess");
-			console.log(player + "player" +  guess + "guess");
-			playerSelection(player, guess);
-		}
-		
-
+        playerTurnMakeGuess(this);
 		return false;
 	});
 	//player 2 selects
 	$('.player2-options').on('click', function(){
-		///only allow player whose turn it is to choose
-		console.log("position" + newPlayerPosition + "turn" + turn);
-		if ( newPlayerPosition = turn ){
-			var player = $(this).data("player");
-			var guess = $(this).data("guess");
-			console.log(player + "player");
-			playerSelection(player, guess);	
-		}
+		playerTurnMakeGuess(this);
 		return false;
 	});	
 
-
-	// Chat section 
-	$('#submit-chat').on('click', function(){
-		// console.log("position" + newPlayerPosition + "turn" + turn);
-		chat.chatInput = $('#chat-input').val().trim();
+	function newChat(){
+		// chat.chatInput = $('#chat-input').val().trim();
 		chat.chatUser = currentPlayer;
 		// clear chat input
 		$('#chat-input').val('');
     	chatDbObj.push(chat);
+	}
+
+	// chat section 
+	$('#submit-chat').on('click', function(){
+		chat.chatInput = $('#chat-input').val().trim();
+		newChat(chat.chatInput);
     	// what to do on disconnect
     	return false;
 
 	});
-	
-	/// not captureing current user arrrrrrggggghhhhh!
-
-
-
-	
-
-
+	// get data from database
 	chatDbObj.orderByKey().on("child_added", function(childSnapshot, prevChildKey) {
-
 		// childSnapshot pulls in the lastest chat addition to the db.
 		if (childSnapshot.exists()) {
 			//  appends the contents of the chat object to the dom
-
 		 	var newdate = moment(childSnapshot.val().timestamp).format("hh:mm:ss");
-			var newPost = "At " + newdate + ', ' + childSnapshot.val().chatUser + " :      " +childSnapshot.val().chatInput;
-			// for (var i=1; i<=objLength; i++ ){
+			var newPost = childSnapshot.val().chatUser + " at " + newdate + " :      " +childSnapshot.val().chatInput;
 			$('#chat-history').append(newPost + '<br>');
-			// var newPostRef = chatDbObj.push();
-			
 		}
-
 	});
 
-
-	
-
-
-
-
 	//	set initial values
-	// database.child('playerPosition').set(newPlayerPosition);
 	turnObj.set(turn);
+	chatDbObj.set("");
 	database.child('message').set(message);
-	console.log(message);
-	
+
 	// clear DOM
 	if( winnerSelected ){
 		$('.choice').addClass("hide");
-	}
-
-	
-	
-	// reset player position on disconnect to allow new players to join
-	if (playerData[1].userid === "")
-	{
-		positionRef.onDisconnect().set(0);	
-
-	}
-    else if (playerData[2].userid === "")
-	{
-		positionRef.onDisconnect().set(1);
-
-	}    
-
-
-	if ((playerData[1].userid === "") && (playerData[2].userid === "")){
-		// if no players clear the chat history
-		$('#chat-history').html('');
-		chatDbObj.set(null);
-
-	}
-    
-    // var exitChat = chatDbObj;
-    // chat.chatInput: "player has left";
-
-	// 	chatUser: '',
-	// 	timestamp: firebase.database.ServerValue.TIMESTAMP
-	// });
-
-    // exitChat.child("chatUser").onDisconnect().set("1");
-    // exitChat.child("chatInput").onDisconnect().set("player has left");
-    // exitChat.child("timestamp").onDisconnect().set("timestamp: firebase.database.ServerValue.TIMESTAMP");
-
-	// chatDbObj.onDisconnect().set({
-	// 	chatInput: " has left",
-	// 	chatUser: currentPlayer,
-	// 	timestamp: firebase.database.ServerValue.TIMESTAMP
-	// });
-
-	// var amOnline = new Firebase('https://<demo>.firebaseio.com/.info/connected');
-	// var userRef = new Firebase('https://<demo>.firebaseio.com/presence/' + userid);
-	// chatDbObj.on('value', function(snapshot) {
-
+	}  
 
 })
 
