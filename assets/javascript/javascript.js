@@ -164,11 +164,8 @@ $('document').ready(function(){
 	function setResetValues(player){
 		var prevPlayer = parseInt(player) - 1;
 		playerData[player].choiceMade = false;
-		// playerData[prevPlayer].choiceMade = false;
 		playerData[player].options = options;
-		// playerData[prevPlayer].options = options;
 		playerData[player].guess = '';
-		// playerData[prevPlayer].guess = '';
 		
 	}
 
